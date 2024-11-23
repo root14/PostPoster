@@ -1,6 +1,4 @@
-# TwikiHelper.py
 from typing import List
-
 from twikit import Client, Tweet
 
 
@@ -15,7 +13,7 @@ class TwikitHelper(object):
         try:
             result = await self.client.get_user_by_id(user_id=userid)
             return result
-        except  Exception as e:
+        except Exception as e:
             print(f"error -> {e}")
             raise e
 
@@ -31,7 +29,6 @@ class TwikitHelper(object):
             print(f"error -> {e}")
             raise e
 
-    ##Expected type 'Literal['Tweets', 'Replies', 'Media', 'Likes']'
     async def get_user_tweets(self, userid, tweet_type='Tweets', count=20):
         try:
             result = await self.client.get_user_tweets(user_id=userid, tweet_type=tweet_type, count=count)
