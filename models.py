@@ -17,7 +17,7 @@ class TweetModel(BaseModel):
     tweet_id = CharField(unique=True)
     full_text = TextField()
     favorite_count = IntegerField()
-    view_count = TextField()
+    view_count = TextField(null=True)
     reply_count = IntegerField()
     user = ForeignKeyField(UserModel, backref='tweets')
 
