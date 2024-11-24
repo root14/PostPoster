@@ -8,20 +8,19 @@ class BaseModel(Model):
         database = db
 
 
-class UserModel(BaseModel):
-    id = CharField(unique=True)  # User ID
-    name = CharField()  # User Name
-
-
 class TweetModel(BaseModel):
     tweet_id = CharField(unique=True)
     full_text = TextField()
     favorite_count = IntegerField()
     view_count = TextField(null=True)
-    reply_count = IntegerField()
-    user = ForeignKeyField(UserModel, backref='tweets')
+    user_id = CharField()
+    user_name = CharField()
+
+
+class PostedPost(BaseModel):
+    posted_post_id = CharField(unique=True)
 
 
 def create_tables():
     with db:
-        db.create_tables([UserModel, TweetModel])
+        db.create_tables([TweetModel, PostedPost])
