@@ -27,27 +27,31 @@ async def main():
     await asyncio.gather(*background_tasks)
 
 
-# todo get data every 3 to 5 min  randomly here
+# todo get data every 10 to 15 min  randomly here
 async def scheduled_tweets():
     while True:
-        print(f'Tweets started to be received: {datetime.now()}')
-        random_period = random.uniform(3, 6)
-        print(random_period)
-        print(f'Tweets started to be completed.: {datetime.now()}')
+        random_period = random.uniform(60 * 10, 60 * 15)
+        print(f'random will timeline will be fetch on {random_period} min')
+        print(f'random_period {random_period}')
+
         await asyncio.sleep(random_period)
+        # http request here
+        print(f'random will timeline will be completed.: {datetime.now()}')
 
 
-# todo pop post every 3 to 5 min  randomly here
+# todo pop post every 3 to 6 min  randomly here
 async def scheduled_post_tweet():
     while True:
-        print(f'Tweets started to be received: {datetime.now()}')
-        random_period = random.uniform(3, 6)
-        print(random_period)
-        print(f'Tweets started to be completed.: {datetime.now()}')
+        random_period = random.uniform(60 * 3, 60 * 6)
+        print(f'random_period {random_period}')
+        print(f'tweet gonna post on. : {datetime.now()} min.')
+
         await asyncio.sleep(random_period)
+        # http request here
+        print(f'tweet posted. : {datetime.now()}')
 
 
 try:
     asyncio.run(main())
 except KeyboardInterrupt:
-    print("Program sonlandırıldı!")
+    print("Postposter finished.")
