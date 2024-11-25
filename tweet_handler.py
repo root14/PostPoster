@@ -1,7 +1,18 @@
+import random
 from typing import List
 
 from models import TweetModel
 from twikit import Tweet
+
+
+# TweetModel.get_by_id(pk=2)
+# TweetModel.select().count()
+async def get_random_tweet():
+    post_count = TweetModel.select().count()
+    random_post = random.randint(1, post_count)
+    # release memory
+    post_count = None
+    return TweetModel.get_by_id(random_post)
 
 
 async def save_tweets(tweets: List[Tweet]):
