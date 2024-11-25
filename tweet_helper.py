@@ -1,7 +1,7 @@
 import random
 from typing import List
 
-from models import TweetModel
+from models import TweetModel, PostedPost
 from twikit import Tweet
 
 
@@ -17,7 +17,7 @@ async def get_random_tweet():
 
 async def save_tweets(tweets: List[Tweet]):
     for tweet in tweets:
-        tweet_instance, created = TweetModel.get_or_create(
+        tweet_instance, _ = TweetModel.get_or_create(
             tweet_id=tweet.id,
             defaults={
                 'full_text': tweet.full_text,

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import random
 import time
 from datetime import datetime
@@ -8,17 +9,21 @@ from dotenv import load_dotenv
 from twikit import Tweet
 
 import endpoint_request
-import tweet_handler
+import posted_post_helper
+import tweet_helper
 from endpoint_request import login_request, add_post
-from models import create_tables, TweetModel
-from tweet_handler import save_tweets
+from models import create_tables, TweetModel, PostedPost
+from tweet_helper import save_tweets
 from twikihelper import TwikitHelper
 
 helper = TwikitHelper(cookies_path='cookies.json')
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 async def main():
-    print("post-poster started")
+    logger.info("post-poster started")
+    # logger.debug("auth token was expired. taken new auth.")
 
     load_dotenv()
 
@@ -34,7 +39,6 @@ async def main():
     await asyncio.gather(*background_tasks)
 
 
-# todo get data every 10 to 15 min  randomly here
 async def scheduled_get_timeline_tweets():
     while True:
         random_period = random.uniform(60 * 10, 60 * 15)
@@ -42,7 +46,8 @@ async def scheduled_get_timeline_tweets():
 
         if endpoint_request.expire_date < (time.time() * 1000):
             await login_request()
-            print(f"auth token was expired. taken new auth.")
+            # print(f"auth token was expired. taken new auth.")
+            logging.info("auth token was expired. taken new auth.")
             await scheduled_get_timeline_tweets()
         else:
             print(f'random will timeline will be fetch on {after_date} min')
@@ -51,10 +56,9 @@ async def scheduled_get_timeline_tweets():
             result: List[Tweet] = await helper.get_time_line(tweet_count=20)
 
             await save_tweets(result)
-            print(f'random will timeline will be completed.: {datetime.now()}')
+            logging.info(f'random timeline fetch completed.: {datetime.now()}')
 
 
-# todo pop post every 3 to 6 min  randomly here
 async def scheduled_post_tweet():
     while True:
         random_period = random.uniform(60 * 3, 60 * 6)
@@ -62,18 +66,22 @@ async def scheduled_post_tweet():
 
         if endpoint_request.expire_date < (time.time() * 1000):
             await login_request()
-            print(f"auth token was expired. taken new auth.")
+            logging.info(f"auth token was expired. taken new auth.")
             await scheduled_get_timeline_tweets()
         else:
             print(f'tweet gonna post on. : {after_date} min.')
             await asyncio.sleep(random_period)
-            r1: TweetModel = await tweet_handler.get_random_tweet()
-            await endpoint_request.add_post(username=r1.user_name, content=r1.full_text)
             # get post from db
-            # http request here
-            # post if post id it not in posted table
+            r1: TweetModel = await tweet_helper.get_random_tweet()
+
+            if not await posted_post_helper.check_if_posted_b4(r1.tweet_id):
+                await endpoint_request.add_post(username=r1.user_name, content=r1.full_text)
+                await posted_post_helper.save_post(r1)
+            else:
+                await scheduled_get_timeline_tweets()
+
             # post tweet and save id to posted table
-            print(f'tweet posted. : {datetime.now()}')
+            logging.info(f'tweet posted. : {datetime.now()}')
 
 
 try:
