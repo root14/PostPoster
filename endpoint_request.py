@@ -19,14 +19,17 @@ def get_headers():
     }
 
 
-async def add_post(username: str, content: str):
+# pass unique value
+async def add_post(user_id: str, content: str):
     #    if not check_if_token_expire():
-    response = requests.post(base_url + "post/addPost", headers=get_headers(), json={
-        "userName": username,
-        "content": content
+    response = requests.post(base_url + "test/addPost", headers=get_headers(), json={
+        "testUserId": user_id,
+        "testContent": content
     })
 
     match response.status_code:
+        case 200:
+            print("successfully post added.")
         case 201:
             print("successfully post added.")
         case _:

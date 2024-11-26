@@ -75,7 +75,7 @@ async def scheduled_post_tweet():
             r1: TweetModel = await tweet_helper.get_random_tweet()
 
             if not await posted_post_helper.check_if_posted_b4(r1.tweet_id):
-                await endpoint_request.add_post(username=r1.user_name, content=r1.full_text)
+                await endpoint_request.add_post(user_id=r1.user_id, content=r1.full_text)
                 await posted_post_helper.save_post(r1)
             else:
                 await scheduled_get_timeline_tweets()
